@@ -1,3 +1,16 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    email VARCHAR (255) UNIQUE NOT NULL,
+    name VARCHAR (255) NOT NULL,
+    password VARCHAR (255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS company_codes (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    group_name VARCHAR (50) UNIQUE NOT NULL,
+    personal_area VARCHAR (50) UNIQUE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS sales_officers (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     sap_id VARCHAR (255) UNIQUE NOT NULL,
@@ -7,11 +20,7 @@ CREATE TABLE IF NOT EXISTS sales_officers (
     company_code_id INTEGER REFERENCES company_codes(id) 
 );
 
-CREATE TABLE IF NOT EXISTS company_codes (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    group VARCHAR (50) UNIQUE NOT NULL,
-    personal_area VARCHAR (50) UNIQUE NOT NULL,
-);
+
 
 CREATE TABLE IF NOT EXISTS distributors (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -39,5 +48,5 @@ CREATE TABLE IF NOT EXISTS pre_sellers (
     employee_sub_group VARCHAR (255) NOT NULL,
     position_no VARCHAR (255) NOT NULL,
     reporting_sales_offices VARCHAR (255) NOT NULL,
-    hired_by hired_by_enum,
+    hired_by hired_by_enum
 );
