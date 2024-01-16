@@ -2,10 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dist": "node dist/server.js",
+    "build": "tsc --build"
+    
   },
   "author": "adhikarisushant",
   "license": "ISC",

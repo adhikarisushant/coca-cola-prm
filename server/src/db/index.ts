@@ -6,6 +6,7 @@ const pool = new Pool({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
+  // @ts-ignore
   port: process.env.PGPORT,
 });
 

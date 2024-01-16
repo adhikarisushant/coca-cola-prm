@@ -1,0 +1,28 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "coca-cola-prm",
+    "dateExported": "2024-01-16T16:24:06.599Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "90c9a973-004d-4825-a7af-ea77a6790ad4",
+            "colId": "87893701-1fd7-465e-8e1a-1e66d602d654",
+            "containerId": "",
+            "name": "create-company-code",
+            "url": "http://localhost:5000/api/v1/create-company-code",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-01-16T16:21:56.596Z",
+            "modified": "2024-01-16T16:23:16.934Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"group_name\": \"BNL\",\n   \"personal_area\": \"lalitpur\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
