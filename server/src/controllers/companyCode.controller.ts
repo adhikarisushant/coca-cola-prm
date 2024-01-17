@@ -33,3 +33,28 @@ export const createCompanyCode = CatchAsyncError(
     }
   }
 );
+
+// edit companyCode
+
+export const editCompanyCode = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { group_name, personal_area } = req.body;
+
+      const id = req.params.id;
+
+      const edit = await db.query(
+        "UPDATE company_codes SET group_name = $1, personal_area = $2 WHERE id = $3 RETURNING *",
+        [group_name, personal_area, id]
+      );
+
+      res.status(201).json({
+        status: true,
+        message: "Company Code updated successfully",
+        result: edit.rows,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

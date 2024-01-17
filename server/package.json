@@ -8,17 +8,20 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "dist": "node dist/server.js",
     "build": "tsc --build"
-    
   },
   "author": "adhikarisushant",
   "license": "ISC",
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/pg": "^8.10.9",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3"
   },
   "devDependencies": {
