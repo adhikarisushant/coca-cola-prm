@@ -25,7 +25,7 @@ export const createCompanyCode = CatchAsyncError(
 
       res.status(201).json({
         status: true,
-        message: "Company Code Created Succcessfully.",
+        message: "Company Code Created Successfully.",
         result: create.rows,
       });
     } catch (error: any) {
