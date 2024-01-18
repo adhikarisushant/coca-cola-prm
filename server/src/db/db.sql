@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR (255) NOT NULL,
-    role VARCHAR (50) DEFAULT 'admin',
+    role VARCHAR (50) DEFAULT 'salesofficer',
     email VARCHAR (255) UNIQUE NOT NULL,
     password VARCHAR (255) NOT NULL
 );
@@ -19,15 +19,14 @@ CREATE TABLE IF NOT EXISTS company_codes (
 CREATE TABLE IF NOT EXISTS sales_officers (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     sap_id VARCHAR (255) UNIQUE NOT NULL,
+    user_id INTEGER REFERENCES users(id),
     name VARCHAR (255) NOT NULL,
-    password VARCHAR (255) NOT NULL,
     company_code_id INTEGER REFERENCES company_codes(id),
     created_by INTEGER REFERENCES users(id),
     updated_by INTEGER REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
 );
-
 
 
 CREATE TABLE IF NOT EXISTS distributors (
@@ -42,7 +41,7 @@ CREATE TABLE IF NOT EXISTS distributors (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
 );
 
-CREATE TYPE hired_by_enum AS ENUM ('ps', 'ds');
+CREATE TYPE IF NOT EXISTS hired_by_enum AS ENUM ('ps', 'ds');
 
 CREATE TABLE IF NOT EXISTS pre_sellers (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

@@ -10,6 +10,7 @@ const companyCodeRouter = express.Router();
 companyCodeRouter.post(
   "/company-code/create",
   isAuthenticated,
+  isAdmin,
   createCompanyCode
 );
 companyCodeRouter.put("/company-code/edit/:id", editCompanyCode);
