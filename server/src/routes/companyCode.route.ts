@@ -13,6 +13,11 @@ companyCodeRouter.post(
   isAdmin,
   createCompanyCode
 );
-companyCodeRouter.put("/company-code/edit/:id", editCompanyCode);
+companyCodeRouter.put(
+  "/company-code/edit/:id",
+  isAuthenticated,
+  isAdmin,
+  editCompanyCode
+);
 
 export default companyCodeRouter;

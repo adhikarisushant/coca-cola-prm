@@ -8,5 +8,5 @@ const companyCode_controller_1 = require("../controllers/companyCode.controller"
 const auth_1 = require("../middleware/auth");
 const companyCodeRouter = express_1.default.Router();
 companyCodeRouter.post("/company-code/create", auth_1.isAuthenticated, auth_1.isAdmin, companyCode_controller_1.createCompanyCode);
-companyCodeRouter.put("/company-code/edit/:id", companyCode_controller_1.editCompanyCode);
+companyCodeRouter.put("/company-code/edit/:id", auth_1.isAuthenticated, auth_1.isAdmin, companyCode_controller_1.editCompanyCode);
 exports.default = companyCodeRouter;

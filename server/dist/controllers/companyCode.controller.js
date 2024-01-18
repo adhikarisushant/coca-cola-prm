@@ -18,13 +18,14 @@ const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
 const db_1 = __importDefault(require("../db"));
 // create company-code
 exports.createCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { group_name, personal_area } = req.body;
         const isExist = yield db_1.default.query("SELECT * FROM company_codes WHERE group_name = $1 OR personal_area = $2;", [group_name, personal_area]);
         if ((isExist === null || isExist === void 0 ? void 0 : isExist.rows.length) > 0) {
             return next(new errorHandler_1.default("Company code already exists", 400));
         }
-        const create = yield db_1.default.query("INSERT INTO company_codes (group_name, personal_area) VALUES ($1, $2) RETURNING *", [group_name, personal_area]);
+        const create = yield db_1.default.query("INSERT INTO company_codes (group_name, personal_area, created_by, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *", [group_name, personal_area, (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id]);
         res.status(201).json({
             status: true,
             message: "Company Code Created Successfully.",
@@ -37,10 +38,11 @@ exports.createCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, n
 }));
 // edit companyCode
 exports.editCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     try {
         const { group_name, personal_area } = req.body;
         const id = req.params.id;
-        const edit = yield db_1.default.query("UPDATE company_codes SET group_name = $1, personal_area = $2 WHERE id = $3 RETURNING *", [group_name, personal_area, id]);
+        const edit = yield db_1.default.query("UPDATE company_codes SET group_name = $1, personal_area = $2, updated_by = $3, updated_at= NOW() WHERE id = $4 RETURNING *", [group_name, personal_area, (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.id, id]);
         res.status(201).json({
             status: true,
             message: "Company Code updated successfully",

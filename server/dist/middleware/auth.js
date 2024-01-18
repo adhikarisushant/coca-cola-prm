@@ -25,9 +25,8 @@ exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
     if (token) {
         try {
             const decoded = yield (0, verifyToken_1.default)(token);
-            const user = (yield db_1.default.query("SELECT * FROM users where id = $1", [
-                decoded.userId,
-            ]));
+            const user = (yield db_1.default.query("SELECT id, role FROM users where id = $1", [decoded.userId]));
+            req.user = user === null || user === void 0 ? void 0 : user.rows[0];
             next();
         }
         catch (error) {
@@ -40,25 +39,11 @@ exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
 }));
 // User role is admin
 exports.isAdmin = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if (!req.cookies.jwt) {
-            return next(new errorHandler_1.default("no token", 401));
-        }
-        const decoded = yield (0, verifyToken_1.default)(req.cookies.jwt);
-        const user = (yield db_1.default.query("SELECT * FROM users where id = $1", [
-            decoded.userId,
-        ]));
-        if ((user === null || user === void 0 ? void 0 : user.rows.length) < 1) {
-            return next(new errorHandler_1.default("user not found", 401));
-        }
-        if ((user === null || user === void 0 ? void 0 : user.rows[0].role) === "admin") {
-            next();
-        }
-        else {
-            return next(new errorHandler_1.default("User is not an admin", 401));
-        }
+    var _a;
+    if (((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.role) === "admin") {
+        next();
     }
-    catch (error) {
-        return next(new errorHandler_1.default("Not authorized, no token", 401));
+    else {
+        return next(new errorHandler_1.default("User is not an admin", 401));
     }
 }));
