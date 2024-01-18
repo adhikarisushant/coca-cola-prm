@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errorHandler";
 import db from "../db";
-import generateToken from "../utils/GenerateToken";
+import generateToken from "../utils/generateToken";
 
 // @desc    Register User
 // @route   POST /user/create

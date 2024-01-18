@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editCompanyCode = exports.createCompanyCode = void 0;
 const catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
-const ErrorHandler_1 = __importDefault(require("../utils/ErrorHandler"));
+const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
 const db_1 = __importDefault(require("../db"));
 // create company-code
 exports.createCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,7 +22,7 @@ exports.createCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, n
         const { group_name, personal_area } = req.body;
         const isExist = yield db_1.default.query("SELECT * FROM company_codes WHERE group_name = $1 OR personal_area = $2;", [group_name, personal_area]);
         if ((isExist === null || isExist === void 0 ? void 0 : isExist.rows.length) > 0) {
-            return next(new ErrorHandler_1.default("Company code already exists", 400));
+            return next(new errorHandler_1.default("Company code already exists", 400));
         }
         const create = yield db_1.default.query("INSERT INTO company_codes (group_name, personal_area) VALUES ($1, $2) RETURNING *", [group_name, personal_area]);
         res.status(201).json({
@@ -32,7 +32,7 @@ exports.createCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, n
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(error.message, 500));
+        return next(new errorHandler_1.default(error.message, 500));
     }
 }));
 // edit companyCode
@@ -48,6 +48,6 @@ exports.editCompanyCode = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(error.message, 500));
+        return next(new errorHandler_1.default(error.message, 500));
     }
 }));

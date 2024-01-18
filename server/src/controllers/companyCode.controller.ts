@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errorHandler";
 import db from "../db";
 
 // create company-code

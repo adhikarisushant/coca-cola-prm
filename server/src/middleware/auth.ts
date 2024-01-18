@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errorHandler";
 import { CatchAsyncError } from "./catchAsyncErrors";
 import { Request, Response, NextFunction } from "express";
 import db from "../db";
+import verifyToken from "../utils/verifyToken";
 
 interface JwtPayload {
   userId: number;
@@ -20,14 +21,11 @@ export const isAuthenticated = CatchAsyncError(
 
     if (token) {
       try {
-        const decoded = jwt.verify(
-          token,
-          process.env.JWT_SECRET as string
-        ) as JwtPayload;
+        const decoded = await verifyToken(token);
 
-        const user = await db.query("SELECT * FROM users where id = $1", [
+        const user: any = (await db.query("SELECT * FROM users where id = $1", [
           decoded.userId,
-        ]);
+        ])) as any;
 
         next();
       } catch (error: any) {
@@ -42,23 +40,28 @@ export const isAuthenticated = CatchAsyncError(
 // User role is admin
 export const isAdmin = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const decoded = jwt.verify(
-      req.cookies.jwt,
-      process.env.JWT_SECRET as string
-    ) as JwtPayload;
+    try {
+      if (!req.cookies.jwt) {
+        return next(new ErrorHandler("no token", 401));
+      }
 
-    const user: any = (await db.query("SELECT * FROM users where id = $1", [
-      decoded.userId,
-    ])) as any;
+      const decoded = await verifyToken(req.cookies.jwt);
 
-    if (user?.rows.length < 1) {
-      return next(new ErrorHandler("user not found", 401));
-    }
+      const user: any = (await db.query("SELECT * FROM users where id = $1", [
+        decoded.userId,
+      ])) as any;
 
-    if (user?.rows[0].role === "admin") {
-      next();
-    } else {
-      return next(new ErrorHandler("User is not an admin", 401));
+      if (user?.rows.length < 1) {
+        return next(new ErrorHandler("user not found", 401));
+      }
+
+      if (user?.rows[0].role === "admin") {
+        next();
+      } else {
+        return next(new ErrorHandler("User is not an admin", 401));
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler("Not authorized, no token", 401));
     }
   }
 );

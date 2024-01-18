@@ -15,18 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginUser = exports.createUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
-const ErrorHandler_1 = __importDefault(require("../utils/ErrorHandler"));
+const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
 const db_1 = __importDefault(require("../db"));
-const GenerateToken_1 = __importDefault(require("../utils/GenerateToken"));
+const generateToken_1 = __importDefault(require("../utils/generateToken"));
 exports.createUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password } = req.body;
         if (!name || !email || !password) {
-            return next(new ErrorHandler_1.default("Please enter the value on all fields", 400));
+            return next(new errorHandler_1.default("Please enter the value on all fields", 400));
         }
         const isEmailExist = yield db_1.default.query("SELECT email FROM users WHERE email = $1;", [email]);
         if ((isEmailExist === null || isEmailExist === void 0 ? void 0 : isEmailExist.rows.length) > 0) {
-            return next(new ErrorHandler_1.default("Email already exists", 400));
+            return next(new errorHandler_1.default("Email already exists", 400));
         }
         const passwordHashed = yield bcrypt_1.default.hash(password, 10);
         //   save user
@@ -37,7 +37,7 @@ exports.createUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) =>
         });
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(error.message, 500));
+        return next(new errorHandler_1.default(error.message, 500));
     }
 }));
 exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,7 +45,7 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => 
         const { email, password } = req.body;
         const findUser = yield db_1.default.query("SELECT * from users WHERE email = $1;", [email]);
         if ((findUser === null || findUser === void 0 ? void 0 : findUser.rows.length) < 1) {
-            return next(new ErrorHandler_1.default("User not found, Please check the email", 400));
+            return next(new errorHandler_1.default("User not found, Please check the email", 400));
         }
         // if user email found, compare password with bcrypt
         if (findUser.rows) {
@@ -54,7 +54,7 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => 
             // generate token with user's id and the secretKey in the env file
             if (comparePassword) {
                 // generate token
-                (0, GenerateToken_1.default)(res, findUser.rows[0].id);
+                (0, generateToken_1.default)(res, findUser.rows[0].id);
                 return res.status(201).json({
                     status: true,
                     message: "Login Successful!",
@@ -69,6 +69,6 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => 
         }
     }
     catch (error) {
-        return next(new ErrorHandler_1.default(error.message, 400));
+        return next(new errorHandler_1.default(error.message, 400));
     }
 }));

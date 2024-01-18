@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAdmin = exports.isAuthenticated = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const ErrorHandler_1 = __importDefault(require("../utils/ErrorHandler"));
+const errorHandler_1 = __importDefault(require("../utils/errorHandler"));
 const catchAsyncErrors_1 = require("./catchAsyncErrors");
 const db_1 = __importDefault(require("../db"));
+const verifyToken_1 = __importDefault(require("../utils/verifyToken"));
 // authenticated user
 exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let token;
@@ -24,44 +24,41 @@ exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, nex
     token = req.cookies.jwt;
     if (token) {
         try {
-            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            const user = yield db_1.default.query("SELECT * FROM users where id = $1", [
+            const decoded = yield (0, verifyToken_1.default)(token);
+            const user = (yield db_1.default.query("SELECT * FROM users where id = $1", [
                 decoded.userId,
-            ]);
+            ]));
             next();
         }
         catch (error) {
-            return next(new ErrorHandler_1.default("Not authorized, no token", 401));
+            return next(new errorHandler_1.default("Not authorized, no token", 401));
         }
     }
     else {
-        return next(new ErrorHandler_1.default("Not authorized, no token", 401));
+        return next(new errorHandler_1.default("Not authorized, no token", 401));
     }
 }));
 // User role is admin
 exports.isAdmin = (0, catchAsyncErrors_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let token;
-    // Read JWT from the 'jwt' cookie
-    token = req.cookies.jwt;
-    if (token) {
-        try {
-            const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            const user = (yield db_1.default.query("SELECT * FROM users where id = $1", [
-                decoded.userId,
-            ]));
-            if ((user === null || user === void 0 ? void 0 : user.rows[0].role) === "admin") {
-                next();
-            }
-            else {
-                return next(new ErrorHandler_1.default("User is not an admin", 401));
-            }
+    try {
+        if (!req.cookies.jwt) {
+            return next(new errorHandler_1.default("no token", 401));
+        }
+        const decoded = yield (0, verifyToken_1.default)(req.cookies.jwt);
+        const user = (yield db_1.default.query("SELECT * FROM users where id = $1", [
+            decoded.userId,
+        ]));
+        if ((user === null || user === void 0 ? void 0 : user.rows.length) < 1) {
+            return next(new errorHandler_1.default("user not found", 401));
+        }
+        if ((user === null || user === void 0 ? void 0 : user.rows[0].role) === "admin") {
             next();
         }
-        catch (error) {
-            return next(new ErrorHandler_1.default("Not authorized, no token", 401));
+        else {
+            return next(new errorHandler_1.default("User is not an admin", 401));
         }
     }
-    else {
-        return next(new ErrorHandler_1.default("Not authorized, no token", 401));
+    catch (error) {
+        return next(new errorHandler_1.default("Not authorized, no token", 401));
     }
 }));
