@@ -2,9 +2,56 @@ import { Request, Response, NextFunction } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/errorHandler";
 import db from "../db";
-import verifyToken from "../utils/verifyToken";
 
-// create company-code
+// @desc    Get All Company Codes
+// @route   GET /company-code/all
+// @access  Admin
+
+export const getAllCompanyCode = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const allData = await db.query("SELECT * FROM company_codes;", []);
+
+      res.status(201).json({
+        status: true,
+        message: "Fetched all Company Codes Successfully.",
+        result: allData.rows,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// @desc    Get Single Company Code
+// @route   GET /company-code/single/:id
+// @access  Admin
+
+export const getSingleCompanyCode = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+
+      const singleData = await db.query(
+        "SELECT * FROM company_codes WHERE id= $1;",
+        [id]
+      );
+
+      res.status(201).json({
+        status: true,
+        message: "Fetched all Company Codes Successfully.",
+        result: singleData.rows,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// @desc    Create Company Code
+// @route   POST /company-code/create
+// @access  Admin
+
 export const createCompanyCode = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -35,7 +82,9 @@ export const createCompanyCode = CatchAsyncError(
   }
 );
 
-// edit companyCode
+// @desc    Edit Company Code
+// @route   PUT /company-code/edit/:id
+// @access  Admin
 
 export const editCompanyCode = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -53,6 +102,31 @@ export const editCompanyCode = CatchAsyncError(
         status: true,
         message: "Company Code updated successfully",
         result: edit.rows,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// @desc    Delete Company Code
+// @route   DELETE /company-code/delete/:id
+// @access  Admin
+
+export const deleteCompanyCode = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id;
+
+      const dataDelete = await db.query(
+        "DELETE FROM company_codes WHERE id=$1 RETURNING *;",
+        [id]
+      );
+
+      res.status(201).json({
+        status: true,
+        message: "Company Code Deleted Successfully",
+        result: dataDelete.rows,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
